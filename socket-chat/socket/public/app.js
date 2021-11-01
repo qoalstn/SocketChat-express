@@ -5,8 +5,10 @@ const chatBox = document.querySelector('.chat-content');
 const displayMsg = document.querySelector('.message');
 
 let name;
+let room;
 do {
   name = prompt('what is your name?');
+  room = prompt('what is your room?');
 } while (!name);
 
 document.querySelector('#your-name').textContent = name;
@@ -19,6 +21,8 @@ btnSend.addEventListener('click', (e) => {
   msgText.focus();
   chatBox.scrollTop = chatBox.scrollHeight;
 });
+
+socket.emit('joinRoom', { name, room });
 
 const sendMsg = (message) => {
   let msg = {
