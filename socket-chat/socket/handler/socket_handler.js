@@ -15,7 +15,7 @@ exports.socketHandler = (io, socket) => {
     });
   });
 
-  // no room
+  // no exist room
   //   socket.on('sendMessage', (msg) => {
   //     console.log('sendMessage : ', msg);
   //     socket.broadcast.emit('sendToAll', msg); // 본인을 제외한 모두에게 message 전송

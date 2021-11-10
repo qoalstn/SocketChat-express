@@ -12,10 +12,11 @@ do {
 } while (!name);
 
 document.querySelector('#your-name').textContent = name;
-msgText.focus();
+document.querySelector('#room-name').textContent = room;
+msgText.focus(); // 포커스 설정 시, 여러 윈도우창 중 맨 앞으로 보내진다.
 
 btnSend.addEventListener('click', (e) => {
-  e.preventDefault();
+  e.preventDefault(); // 1. a 태그를 눌러도 href링크로 이동하지 않는다. 2. submit 버튼을 눌러도 새로고침 되지 않는다.(결과는 출력)
   sendMsg(msgText.value);
   msgText.value = '';
   msgText.focus();
