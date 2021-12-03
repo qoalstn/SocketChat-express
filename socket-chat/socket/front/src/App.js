@@ -1,15 +1,14 @@
-import chatView from './pages/chat_view';
-import chatList from './components/chat_list';
-import { Route } from 'react-router-dom';
+import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
+import ChatView from './pages/chat_view.js';
+// import ChatView from './components/chat_list.js';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>Hello, world</p>
-        <chatView />
-        <chatList />
-      </header>
+      <Router>
+        <Route path="/" component={ChatView} />
+      </Router>
     </div>
   );
 }
