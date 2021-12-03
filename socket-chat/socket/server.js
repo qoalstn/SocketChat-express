@@ -2,12 +2,14 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const http = require('http').createServer(app);
+const cors = require('cors');
 
 //morgan
 const morgan = require('morgan');
+app.use(cors());
 app.use(morgan('dev'));
 
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'front/public')));
 
 //socket
 const socketHandler = require('./handler/socket_handler');
