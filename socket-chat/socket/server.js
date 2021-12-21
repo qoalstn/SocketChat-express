@@ -9,7 +9,7 @@ const morgan = require('morgan');
 app.use(cors());
 app.use(morgan('dev'));
 
-app.use(express.static(path.join(__dirname, 'front/public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 //socket
 const socketHandler = require('./handler/socket_handler');

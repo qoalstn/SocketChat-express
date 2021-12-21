@@ -1,77 +1,83 @@
 import React, { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
-import './chat_view.css';
+import './Main.css';
+import Chat from '../components/Chat';
 
-const socket = io('http://localhost:3111/');
-
+// let socket = io('http://localhost:3001', { transports: ['websocket'] });
+let socket = io('http://localhost:3001', {
+  query: `userId=61b9b06633ca50509c0a42fe`,
+  transports: ['websocket'],
+});
 function ChatView() {
   const [name, setName] = useState('');
   const [room, setRoom] = useState('');
   const [msgText, setMsgText] = useState('');
-  const [other_msgList, other_setMsgList] = useState([]);
-  const [your_msgList, your_setMsgList] = useState([]);
+  const [msgList, setMsgList] = useState([]);
+  // const [socket, setSocket] = useState();
 
   useEffect(() => {
     setName(prompt('what is your name?'));
     setRoom(prompt('what is your room?'));
+
+    // async function connect() {
+    //   socket = io.connect('http://localhost:3001', {
+    //     query: `userId=${name}`,
+    //     transports: ['websocket'],
+    //   });
+    // }
+    // connect();
   }, []);
 
   // msgText.focus(); // 포커스 설정 시, 여러 윈도우창 중 맨 앞으로 보내진다.
-
   const clickSend = (e) => {
     e.preventDefault(); // 1. a 태그를 눌러도 href링크로 이동하지 않는다. 2. submit 버튼을 눌러도 새로고침 되지 않는다.(결과는 출력)
+
+    if (msgList.length === 0) {
+      // console.log('조인룸', room);
+      socket.emit('join room', room);
+    }
     sendMsg(msgText);
     setMsgText('');
+
+    // window.scrollTo();
     // msgText.focus();
     // chatBox.scrollTop = chatBox.scrollHeight;
   };
 
-  socket.emit('joinRoom', { name, room });
-
   const sendMsg = (message) => {
+    console.log('sendMsg', room);
     let msg = {
+      type: 'message-row you-message',
       user: name,
-      message: message.trim(),
+      message: message,
     };
-    display(msg, 'you-message');
 
-    socket.emit('sendMessage', msg);
+    setMsgList([...msgList, msg]);
+
+    socket.emit('conversation', msg);
   };
 
-  socket.on('sendToAll', (msg) => {
-    //   console.log('msg : ', msg);
-    display(msg, 'other-message');
+  socket.on('conversation', (message) => {
+    console.log('conversation : ', message);
+    let msg = {
+      type: 'message-row other-message',
+      user: name,
+      message: message.message,
+    };
+
+    setMsgList([...msgList, msg]);
     // chatBox.scrollTop = chatBox.scrollHeight;
   });
 
-  const display = (msg, type) => {
-    // const msgDiv = document.createElement('div');
-    // let className = type;
-    // msgDiv.classList.add(className, 'message-row');
-
-    let times = new Date().toLocaleDateString();
-    let innerText = `
-    <div class="message-title">🙂<span>${msg.user}</span></div>
-    <div class="message-text">${msg.message}</div>
-    <div class="message-time">${times}</div>`;
-
-    if (type == 'you-message') {
-      your_setMsgList([...your_msgList, your_msgList.push(innerText)]);
-    }
-    if (type == 'other-message') {
-      other_setMsgList([...other_msgList, other_msgList.push(innerText)]);
-    }
-
-    // msgDiv.innerHTML = innerText;
-    // displayMsg.appendChild(msgDiv);
-  };
+  socket.on('chat message', (data) => {
+    console.log(data);
+  });
 
   return (
     <div>
       <div class="chat-container">
         <div class="chat-header">
           <div class="logo">
-            {/* <i class="fa fa-child" style="font-size: 36px"></i> */}
             <i class="fa fa-child"></i>
             <h3>Messenger</h3>
           </div>
@@ -85,27 +91,27 @@ function ChatView() {
           <div class="main-wrapper">
             <div class="chat-content">
               <div class="message">
-                <div class="message-row other-message">
-                  {other_msgList.map((index, i) => {
-                    console.log('asdf', index, i);
-                    return <div>{i}</div>;
-                  })}
-                </div>
-                <div class="message-row you-message">
-                  {your_msgList.map((i, index) => {
-                    return <div key={index}>{i}</div>;
-                  })}
-                </div>
+                {msgList.map((i, index) => {
+                  return (
+                    <Chat
+                      key={index}
+                      type={i.type}
+                      user={i.user}
+                      message={i.message}
+                      time={i.time}
+                    />
+                  );
+                })}
               </div>
             </div>
-
             <form class="msg-tex">
               <input
                 type="text"
                 name="msg"
                 id="msg"
                 placeholder="Message Here.."
-                autocomplete="off"
+                autoComplete="off"
+                value={msgText}
                 onChange={(e) => {
                   setMsgText(e.target.value);
                 }}

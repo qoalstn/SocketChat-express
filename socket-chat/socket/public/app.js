@@ -23,7 +23,7 @@ btnSend.addEventListener('click', (e) => {
   chatBox.scrollTop = chatBox.scrollHeight;
 });
 
-socket.emit('joinRoom', { name, room });
+socket.emit('join room', { name, room });
 
 const sendMsg = (message) => {
   let msg = {
