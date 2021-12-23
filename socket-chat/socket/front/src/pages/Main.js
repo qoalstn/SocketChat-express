@@ -3,10 +3,25 @@ import { io } from 'socket.io-client';
 import './Main.css';
 import Chat from '../components/Chat';
 
-// let socket = io('http://localhost:3001', { transports: ['websocket'] });
-let socket = io('http://localhost:3001', {
+const baseUrl = 'http://localhost:3001';
+const params = {
   query: `userId=61b9b06633ca50509c0a42fe`,
   transports: ['websocket'],
+};
+let socket = io(baseUrl, params);
+var socket_ = io(baseUrl + '/chat', params);
+socket_.on('hi', function (data) {
+  console.log(data);
+});
+socket.on('connect_error', (err) => {
+  console.log(err instanceof Error); // true
+  console.log(err.message); // not authorized
+  console.log(err.data); // { content: "Please retry later" }
+});
+socket_.on('connect_error', (err) => {
+  console.log(err instanceof Error); // true
+  console.log(err.message); // not authorized
+  console.log(err.data); // { content: "Please retry later" }
 });
 function ChatView() {
   const [name, setName] = useState('');
@@ -45,7 +60,7 @@ function ChatView() {
   };
 
   const sendMsg = (message) => {
-    console.log('sendMsg', room);
+    // console.log('sendMsg', room);
     let msg = {
       type: 'message-row you-message',
       user: name,
@@ -73,11 +88,20 @@ function ChatView() {
     console.log(data);
   });
 
+  socket.on('error test', (err) => {
+    console.log('error event', err);
+  });
+
+  const close = () => {
+    socket.emit('leave room');
+  };
+
   return (
     <div>
       <div class="chat-container">
         <div class="chat-header">
           <div class="logo">
+            <button onClick={close}>1[ X ]</button>
             <i class="fa fa-child"></i>
             <h3>Messenger</h3>
           </div>
