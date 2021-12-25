@@ -21,6 +21,20 @@ io.on('connection', (socket) => {
   socketHandler.socketHandler(io, socket);
 });
 
+var namespace = io.of('/namespace');
+
+namespace.on('connection', (socket) => {
+  console.log('namespace connect');
+
+  io.use(async (socket, next) => {
+    if (socket.handshake.query.userId !== '1234') {
+      next(new Error('unauthorized'));
+    } else {
+      next();
+    }
+  });
+});
+
 //port
 const PORT = process.env.PORT || 3111;
 http.listen(PORT, () => {

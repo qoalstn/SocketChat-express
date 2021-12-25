@@ -5,7 +5,8 @@ import Chat from '../components/Chat';
 
 const baseUrl = 'http://localhost:3001';
 const params = {
-  query: `userId=61b9b06633ca50509c0a42fe`,
+  // query: `userId=61b9b06633ca50509c0a42fe`,
+  query: `userId=1234`,
   transports: ['websocket'],
 };
 let socket = io(baseUrl, params);
