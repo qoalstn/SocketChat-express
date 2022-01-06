@@ -4,11 +4,14 @@ exports.socketHandler = (io, socket) => {
   //   console.log('userId : ', userId);
   //   console.log('socketRoom : ', socketRoom);
 
-  socket.on('join room', async (roomId) => {
-    socket.join(roomId); // room join
+  socket.on('join room', async (data) => {
+    console.log(1, data);
+    socket.join(data.room); // room join
 
     socket.on('conversation', (res) => {
-      socket.broadcast.to(roomId).emit('conversation', res); // 나를 제외한 그룹 전체
+      console.log(2, res, data.room);
+      socket.broadcast.to(data.room).emit('conversation', res); // 나를 제외한 그룹 전체
+      // socket.broadcast.emit('conversation', res); // 나를 제외한 그룹 전체
     });
   });
 

@@ -32,11 +32,11 @@ const sendMsg = (message) => {
   };
   display(msg, 'you-message');
 
-  socket.emit('sendMessage', msg);
+  socket.emit('conversation', msg);
 };
 
-socket.on('sendToAll', (msg) => {
-  //   console.log('msg : ', msg);
+socket.on('conversation', (msg) => {
+  console.log('msg : ', msg);
   display(msg, 'other-message');
   chatBox.scrollTop = chatBox.scrollHeight;
 });

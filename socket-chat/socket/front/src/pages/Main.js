@@ -5,21 +5,21 @@ import Chat from '../components/Chat';
 
 const baseUrl = 'http://localhost:3001';
 const params = {
-  // query: `userId=61b9b06633ca50509c0a42fe`,
-  query: `userId=1234`,
+  query: `userId=61b9b06633ca50509c0a42fe`,
+  // query: `userId=1234`,
   transports: ['websocket'],
 };
-let socket = io(baseUrl, params);
-var socket_ = io(baseUrl + '/chat', params);
-socket_.on('hi', function (data) {
-  console.log(data);
-});
+// let socket_ = io(baseUrl, params);
+var socket = io(baseUrl + '/chat', params);
+// socket_.on('hi', function (data) {
+//   console.log(data);
+// });
+// socket.on('connect_error', (err) => {
+//   console.log(err instanceof Error); // true
+//   console.log(err.message); // not authorized
+//   console.log(err.data); // { content: "Please retry later" }
+// });
 socket.on('connect_error', (err) => {
-  console.log(err instanceof Error); // true
-  console.log(err.message); // not authorized
-  console.log(err.data); // { content: "Please retry later" }
-});
-socket_.on('connect_error', (err) => {
   console.log(err instanceof Error); // true
   console.log(err.message); // not authorized
   console.log(err.data); // { content: "Please retry later" }
@@ -27,6 +27,7 @@ socket_.on('connect_error', (err) => {
 function ChatView() {
   const [name, setName] = useState('');
   const [room, setRoom] = useState('');
+  const [type, setType] = useState('');
   const [msgText, setMsgText] = useState('');
   const [msgList, setMsgList] = useState([]);
   // const [socket, setSocket] = useState();
@@ -34,7 +35,7 @@ function ChatView() {
   useEffect(() => {
     setName(prompt('what is your name?'));
     setRoom(prompt('what is your room?'));
-
+    setType(prompt('what is your type?'));
     // async function connect() {
     //   socket = io.connect('http://localhost:3001', {
     //     query: `userId=${name}`,
@@ -70,7 +71,21 @@ function ChatView() {
 
     setMsgList([...msgList, msg]);
 
-    socket.emit('conversation', msg);
+    let sendData = {
+      room_id: room,
+      user_type: type,
+      username: name,
+      msg: message,
+      sys_msg: '',
+      readed: '',
+      user_confirm: '',
+      created_at: new Date(),
+      del: '',
+      file_path: '',
+      file_orgname: '',
+    };
+
+    socket.emit('conversation', sendData);
   };
 
   socket.on('conversation', (message) => {
