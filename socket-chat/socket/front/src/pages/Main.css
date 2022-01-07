@@ -14,6 +14,9 @@ body {
   align-items: center;
 }
 
+.main-container {
+  display: flex;
+}
 .chat-container {
   max-width: 500px;
   width: 100%;
